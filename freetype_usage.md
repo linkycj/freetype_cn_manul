@@ -1,12 +1,6 @@
-% Freetype 手册
-% Cathy.zheng(原稿) Linkycj(重排)
-% Freetype手册的中文翻译
-
-英文地址: https://www.freetype.org/freetype2/docs/glyphs/index.html,为官方推荐必读文档.
-
-This document presents the core conventions used within the FreeType library to manage font and glyph data. 
-It is a must-read for all developers who need to understand digital typography, especially if you want to use the FreeType 2 library in your projects.
-
+% Freetype 中文手册
+% Cathy.zheng(原稿) Linky.chen(校对补充)
+% 英文地址: https://www.freetype.org/freetype2/docs/documentation.html
 
 # FreeType 字形约定
 ## 基本印刷概念
@@ -182,8 +176,7 @@ overshoot 的特性，这在小象素字体会引起一些问题。
 负值。
 * 行距（linegap）。两行文本间必须的距离，基线到基线的距离应该计算成：
 
-	linespace = ascent - descent + linegap
-	上行高度 － 下行高度 ＋ 行距
+linespace = ascent - descent + linegap
 
 如果您使用印刷值。
 
@@ -196,8 +189,10 @@ overshoot 的特性，这在小象素字体会引起一些问题。
 需知道它的大小即可。但为了正确渲染一个对齐的字形，需要保存每个字形在基线上转换、放置的重要
 对齐。
 
-* 内部 leading。这个概念从传统印刷业而来，他表示字形出了 EM 正方形空间数量，通常计算如下：internal
-leading = ascent – descent – EM_size
+* 内部 leading。这个概念从传统印刷业而来，他表示字形出了 EM 正方形空间数量，通常计算如下：
+
+internal leading = ascent – descent – EM_size
+
 * 外部 leading。行距的别名。
 
 ### 跨距（bearing）和步进
@@ -217,12 +212,16 @@ leading = ascent – descent – EM_size
 在FreeType API中，这也被称为 advanceY。
 * 字形宽度。字形的水平长度。对未缩放的字体坐标，它是 bbox.xMax-bbox.xMin，对已缩放字形，它的计
 算要看特定情况，视乎不同的网格对齐而定。
-	glyph width = bbox.xMax - bbox.xMin
+
+glyph width = bbox.xMax - bbox.xMin
+
 * 字形高度。字形的垂直长度。对未缩放的字体坐标，它是 bbox.yMax-bbox.yMin，对已缩放字形，它的计
 算要看特定情况，视乎不同的网格对齐而定。
 在FreeType API中，这也被称为 advanceX。
 * 右跨距。只用于水平布局，描述从 bbox 右边到步进宽度的距离，通常是一个非负值。
-  advance_width – left_side_bearing – (xMax-xMin)
+
+advance_width – left_side_bearing – (xMax-xMin)
+
 该值的常见简写是“rsb”。
 
 
@@ -413,7 +412,7 @@ hinting 试图扩大它已缩放轮廓，以让它三条腿区分开来，这将
 * 对于每个剩余的字形，从第3步开始。
 * 当所有字形完成后，将文本光标设置到新的笔位置。
 
-## FT 轮廓(Outline)
+## FT_Outline(字体轮廓)
 本节的目的是介绍FreeType管理向量轮廓的方式，以及可以应用于它们的最常见的操作。
 
 ### FT 轮廓描述和结构
@@ -451,7 +450,7 @@ FT_Curve_Tag_Cubic 一个 Off 点，控制一个 cubic Bezier 弧
 
 ![points_cubic](pics/points_cubic.png){width=236px height=183px} ![points_conic2](pics/points_conic2.png){width=236px height=183px}
 
-#### 轮廓描述符(FT_Outline)
+#### 轮廓描述(FT_Outline)
 
 FT 轮廓通过一个简单的结构描述
 
@@ -469,7 +468,7 @@ FT_Outline {
 
 contours是一系列点索引，用于界定轮廓中的轮廓。例如，第一个轮廓始终从0开始，并以点结束contours[0]。第二个轮廓从点contours[0]+1到尾开始 contours[1]，等等。以回调方式遍历这些点，使用FT_Outline_Decompose。
 
-请注意，每个轮廓都是关闭的，并且该值n_points应等于contours[n_contours-1]+1有效轮廓。
+请注意，每个轮廓都是闭合的，并且该值n_points应等于contours[n_contours-1]+1有效轮廓。
 
 最后，tags是一个字节数组，用于存储每个轮廓点的标签。
 
@@ -512,12 +511,21 @@ ceiling(x) == (x + 63) & -64
 
 * 计算 bbox；
 * 对齐 bbox 如下：
+
 xmin = floor(bbox.xMin)
+
 xmax = ceiling(bbox.xMax)
+
 ymin = floor(bbox.yMin)
+
 ymax = ceiling(bbox.yMax)
+
 * 返回象素尺寸，即
-	width = (xmax-xmin) / 64 和 height = (ymax-ymin) / 64
+
+width = (xmax-xmin) / 64
+
+height = (ymax-ymin) / 64
+
 通过对齐 bbox，可以保证所有的象素中心将画到，包括那些从 drop-out 控制来的，将在调整后的框子之
 中。接着，框子的象素尺寸可以计算出来。
 
@@ -526,6 +534,7 @@ ymax = ceiling(bbox.yMax)
 
 ## FT 位图
 本节的目的是介绍FreeType管理位图和像素图的方式，以及它们如何与先前定义的概念相关联。说明矢量和像素坐标之间的关系。
+
 ### 矢量坐标和象素坐标对比
 这里阐述了向量坐标的象素坐标的区别，为了更清楚的说明，使用方括号来表示象素坐标，使用圆括号
 表示向量坐标。
@@ -557,9 +566,9 @@ FT_Bitmap {
 	}
 ~~~
 pitch 属性值的正负符号确定象素缓冲中的行是升序还是降序存放。
-上面说道 FT 在 2D 平面上使用 Y 轴向上的规约，这意味着(0,0)总是指向位图的左下角。如果 picth 是正值，按照向量减少的方向存储行，即象素缓	冲的第一个字节表示位图最上一行的部分。如果是负值，第一个字节将表示位图最下一行的部分。对所有的情况，pitch 可以看作是在指定位图缓冲中，跳到下一个扫描行的字节增量。如图:[up_flow]/[down_flow]
+上面说道 FT 在 2D 平面上使用 Y 轴向上的规约，这意味着(0,0)总是指向位图的左下角。如果 picth 是正值，按照向量减少的方向存储行，即象素缓	冲的第一个字节表示位图最上一行的部分。如果是负值，第一个字节将表示位图最下一行的部分。对所有的情况，pitch 可以看作是在指定位图缓冲中，跳到下一个扫描行的字节增量。
 
-![up_flow](pics/up_flow.png){width=273px height=263px} ![down_flow](pics/down_flow.png){width=273px height=263px}
+![up_flow](pics/up_flow.png){width=49% height=263px} ![down_flow](pics/down_flow.png){width=49% height=263px}
 
 通常都使用正 pitch，当然有的系统会使用负值。
 
@@ -684,9 +693,11 @@ typedef struct FT_FooBarRec_
 这个类型对应一个库的单一实例句柄，没有定义相应的 FT_LibraryRec，使客户应用无法访问它的内部属
 性。 库对象是所有 FT 其他对象的父亲，你需要在做任何事情前创建一个新的库实例，销毁它时会自动销毁
 他所有的孩子，如 face 和 module 等。 通常客户程序应该调用 FT_Init_FreeType()来创建新的库对象，准备作
-其 他 操 作 时 使 用 。 另 一 个 方 式 是 通 过 调 用 函 数 FT_New_Library() 来 创 建 一 个 新 的 库 对 象 ， 它 在
-<freetype/ftmodule.h> 中 定 义 ， 这 个 函 数 返 回 一 个 空 的 库 ， 没 有 任 何 模 块 注 册 ， 你 可 以 通 过 调 用
-FT_Add_Module()来安装模块。
+其 他 操 作 时 使 用 。
+
+另 一 个 方 式 是 通 过 调 用 函 数 FT_New_Library() 来 创 建 一 个 新 的 库 对 象 ， 它 在
+<freetype/ftmodule.h> 中 定 义 ， 这 个 函 数 返 回 一 个 空 的 库 ， 没 有 任 何 模 块 注 册 ， 你 可 以 通 过 调 用FT_Add_Module()来安装模块。
+
 调用 FT_Init_FreeType()更方便一些，因为他会缺省地注册一些模块。这个方式中，模块列表在构建时动
 态计算，并依赖 ftinit 部件的内容。（见 ftinit.c[l73]行，include FT_CONFIG_MODULES_H，其实就是包含
 ftmodule.h，在 ftmodule.h 中定义缺省的模块，所以模块数组 ft_default_modules 的大小是在编译时动态确定
