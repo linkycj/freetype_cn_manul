@@ -921,7 +921,7 @@ FT_CALLBACK_DEF（FT_Module_Interface）
 
 服务记录处理   服务; 
 
-~~~~
+~~~
 FT_FACE_FIND_GLOBAL_SERVICE（face，
                              service，service-id-tail）;
 ~~~
