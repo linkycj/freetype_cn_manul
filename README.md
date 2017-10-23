@@ -1,4 +1,4 @@
-# Freetype手册的中文翻译
+# Freetype中文手册
 
 英文地址: https://www.freetype.org/freetype2/docs/glyphs/index.html , 为官方推荐必读文档. Cathy.zheng(原稿) Linky.chen(校对更新)
 

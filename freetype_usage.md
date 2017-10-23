@@ -1457,7 +1457,7 @@ for ( n = 0; n < num_chars; n++ )
 - Width
 这是字形图像的边框的宽度。它与排列方向无关。
 - Height
-这是字形图像的边框的高度。它与排列方向无关。
+这是字形图像的边框的高度。它与排列方向无关。注意区别FT_Size_Metrics结构里面的'height'。
 - horiBearingX
 用于水平文本排列，这是从当前光标位置到字形图像最左边的边界的水平距离。
 - horiBearingY
@@ -1470,15 +1470,19 @@ for ( n = 0; n < num_chars; n++ )
 用于垂直文本排列，这是从当前光标位置（位于基线）到字形图像最上边的边框的垂直距离。
 - vertAdvance
 用于垂直文本排列，当字形作为字符串的一部分被绘制时，这用来增加笔位置的垂直距离。
-注意：因为不是所有的字体都包含垂直度量，当 FT_HAS_VERTICAL 为假时，vertBearingX，vertBearingY
-和 vertAdvance 的值是不可靠的。
-下面的图形更清楚地图解了度量。第一个图解了水平度量，其基线为水平轴：
 
-对于垂直文本排列，基线是垂直的，与垂直轴一致：
+注意：因为不是所有的字体都包含垂直度量，当 FT_HAS_VERTICAL 为假时，vertBearingX，vertBearingY 和 vertAdvance 的值是不可靠的。
 
-对于垂直文本排列，基线是垂直的，与垂直轴一致：
-Face->glyph->metrics 中的度量通常以 26.6 象素格式（例如 1/64 象素）表示，除非你在调用 FT_Load_Glyph
-或 FT_Load_Char 时使用了 FT_LOAD_NO_SCALE 标志，这样的话度量会用原始字体单位表示。
+下面的图形更清楚地图解了度量。在距离指示的情况下，用单个箭头标记，表示正值。第一个图显示水平度量，其基线为水平轴：
+
+![horizental_metrics](pics/metrics.png){width=388px height=253px}
+
+对于垂直文本排列，基线是垂直的，与垂直轴一致。与所有其他箭头相反，bearingX在此图像中显示负值。
+
+![vertival_metrics](pics/metrics2.png){width=294px height=278px}
+
+Face->glyph->metrics 中的度量通常以 26.6 象素格式（例如 1/64 象素）表示，除非你在调用 FT_Load_Glyph 或 FT_Load_Char 时使用了 FT_LOAD_NO_SCALE 标志，这样的话度量会用原始字体单位表示。
+
 字形槽(glyph slot)对象也有一些其他有趣的字段可以减轻开发者的工作。你可以通过 face->glyph->xxx 访问它们，其中 xxx 是下面字段之一：
 
 - Advance
@@ -1991,7 +1995,7 @@ FT_Vector delta;
 ... 设置 "matrix" 和 "delta" ...
 /* 变换字形 */
 for ( n = 0; n < num_glyphs; n++ )
-FT_Glyph_Transform( glyphs[n].image, &matrix, &delta );
+	FT_Glyph_Transform( glyphs[n].image, &matrix, &delta );
 /* 计算已变换字形的边界框 */
 compute_string_bbox( &bbox );
 
@@ -2134,3 +2138,21 @@ FT_LOAD_NO_SCALE 位标志便可以了。度量返回在 face->glyph_metrics，�
 你可以使用 FT_KERNING_MODE_UNSCALED 模式访问未伸缩的字距调整数据。
 
 最后，如本部分第3部分所述，可以直接在字体单位中使用一些全局度量标准作为FT_Face句柄的字段。
+
+# 附录
+
+# GPOS
+
+GPOS表可以控制字距调整，强调定位，草书加入等。用来定位字形。
+
+# GSUB
+
+GSUB表格可以控制诸如：连字，阿拉伯形式，垂直旋转，转换为小帽，指示字形重排等。用来替换字形。
+
+# GDEF 
+
+GDEF包含一些比较深奥的字形信息，连字符等等.BASE包含有关基线布置和线高度的信息。用于分类字形和提供连字插入符号表。
+
+# BASE 
+
+用于基线放置
